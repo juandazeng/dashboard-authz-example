@@ -11,7 +11,7 @@ kind: OAuthClient
 metadata:
   name: dashboard-oauth-client
 secret: dashboard-oauth-client-secret
-grantMethod: prompt
+grantMethod: auto
 # --- THIS IS THE FIX ---
 # We explicitly allow this client to request the user:full scope
 scopes:
