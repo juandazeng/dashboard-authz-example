@@ -14,9 +14,11 @@ spec:
       labels:
         app: dashboard
     spec:
+      serviceAccountName: dashboard-proxy-sa
       containers:
+        # --- Container 1: The main app ---
         - name: dashboard-app
-          image: quay.io/jzeng/dashboard-authz-example:v1.3
+          image: quay.io/jzeng/dashboard-authz-example:v1.4
           ports:
             - containerPort: 8080
           volumeMounts:
@@ -24,11 +26,43 @@ spec:
               # Mounts the ConfigMap data into this directory
               mountPath: /config
               readOnly: true
+        # --- Container 2: The OpenShift OAuth Proxy ---
+        - name: oauth-proxy
+          image: registry.redhat.io/openshift4/ose-oauth-proxy:latest
+          ports:
+            - containerPort: 8443
+              name: proxy-https
+          args:
+            - "--https-address=:8443"
+            - "--provider=openshift"
+            - "--openshift-service-account=dashboard-proxy-sa"
+            # This is key: it forwards traffic to the main app on localhost
+            # The --cookie-secret is a random string, which can be generated with openssl rand -base64 32
+            - "--upstream=http://127.0.0.1:8080"
+            - "--tls-cert=/etc/tls/private/tls.crt"
+            - "--tls-key=/etc/tls/private/tls.key"
+            - "--cookie-secret=rUFpN4AeIesgQcgHHCkYDt0s+j6LQouz2RzdfwHqQ9s="
+            # This tells the proxy to pass the headers to your app
+            - "--pass-basic-auth=false"
+            - "--set-xauthrequest=true"
+            - "--skip-provider-button=true"
+            - "--email-domain=*"
+            - "--pass-access-token=true"
+            - "--set-authorization-header=true"
+          volumeMounts:
+            # Mount the service certs needed for TLS
+            - name: proxy-tls
+              mountPath: /etc/tls/private
+              readOnly: true
       volumes:
+        # Volume for your app's config
         - name: config-volume
-          # Links this volume to the ConfigMap named 'dashboard-role-config'
           configMap:
             name: dashboard-role-config
+        # Volume for the proxy's TLS certs (auto-injected by OpenShift)
+        - name: proxy-tls
+          secret:
+            secretName: dashboard-route-tls
 ---
 apiVersion: v1
 kind: Service
@@ -36,10 +70,15 @@ metadata:
   name: dashboard-service
   labels:
     app: dashboard
+  # THIS ANNOTATION tells OpenShift to auto-generate the secret
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: dashboard-route-tls
 spec:
   ports:
-    - port: 8080
-      targetPort: 8080
+    # The service exposes the PROXY'S port
+    - port: 443
+      targetPort: 8443
+      name: proxy-https
   selector:
     app: dashboard
 ---
@@ -54,4 +93,9 @@ spec:
     kind: Service
     name: dashboard-service
   port:
-    targetPort: 8080
+    # The route targets the service's port (which is named 'proxy-https')
+    targetPort: proxy-https
+  tls:
+    # 'Reencrypt' means the external route is secure (TLS)
+    # and the internal connection to the proxy is ALSO secure (TLS).
+    termination: reencrypt

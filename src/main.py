@@ -61,6 +61,68 @@ def get_current_user_context():
     return user, groups, role
 
 # --- Templates (in-lined for simplicity) ---
+LOGIN_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Login Required</title>
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f4f7fa;
+      margin: 0;
+    }
+    .login-card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 40px;
+      text-align: center;
+    }
+    .login-button {
+      display: inline-block;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: #007bff;
+      border: 0;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <h2>Authentication Required</h2>
+    <p>You must log in via OpenShift to access this dashboard.</p>
+    <a href="/oauth/start?rd=/" class="login-button">Login with OpenShift</a>
+  </div>
+</body>
+</html>
+"""
+
+ERROR_403_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Access Denied</title></head>
+<body>
+  <h1>Access Denied (403 Forbidden)</h1>
+  <p>Sorry, <strong>{{ user }}</strong>, you do not have permission to view this page.</p>
+  <p>
+    Your role ('<strong>{{ role }}</strong>', from groups: {{ groups }}) 
+    is not authorized for this resource.
+  </p>
+  <p><a href="/">Back to Dashboard</a></p>
+</body>
+</html>
+"""
 
 DASHBOARD_TEMPLATE = """
 <!DOCTYPE html>
@@ -122,8 +184,9 @@ def dashboard():
     
     if role in ['admin', 'user']:
         return render_template_string(DASHBOARD_TEMPLATE, user=user, groups=groups, role=role)
-    else:
-        return render_template_string(ERROR_403_TEMPLATE, user=user, groups=groups, role=role), 403
+    
+    # If role is 'none', they are not authenticated. Show the login page.
+    return render_template_string(LOGIN_TEMPLATE)
 
 @app.route('/admin')
 def admin_panel():
@@ -132,9 +195,14 @@ def admin_panel():
     
     if role == 'admin':
         return render_template_string(ADMIN_TEMPLATE, user=user, groups=groups, role=role)
-    else:
-        # Deny access to 'user' or 'none'
+    
+    elif role == 'user':
+        # The user is logged in, but not an admin. This is a 403 Forbidden.
         return render_template_string(ERROR_403_TEMPLATE, user=user, groups=groups, role=role), 403
+    
+    else:
+        # The user is not logged in at all (role == 'none'). Show the login page.
+        return render_template_string(LOGIN_TEMPLATE)
 
 if __name__ == '__main__':
     load_config() # Load config on startup
