@@ -37,7 +37,7 @@ spec:
             - "--https-address=:8443"
             - "--provider=openshift"
             - "--openshift-service-account=dashboard-proxy-sa"
-            - "--client-secret-file=/etc/oauth-secret/client-secret"
+            - "--cookie-secret-file=/etc/oauth-secret/client-secret"
             # This is key: it forwards traffic to the main app on localhost
             # The --cookie-secret is a random string, which can be generated with openssl rand -base64 32
             - "--upstream=http://127.0.0.1:8080"
