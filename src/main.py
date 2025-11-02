@@ -47,12 +47,15 @@ def get_current_user_context():
     """
     Simulates OpenShift's OAuth proxy by reading headers.
     """
+    print(f"Headers: {request.headers}")
+
     # X-Forwarded-User is set by the OpenShift OAuth proxy
     user = request.headers.get('X-Forwarded-User', 'guest')
     print(f"Current user: {user}")
     
     # X-Forwarded-Group is a comma-separated list of groups
     groups_header = request.headers.get('X-Forwarded-Group', '')
+    print(f"Groups header: {groups_header}")
     groups = [g.strip() for g in groups_header.split(',') if g.strip()]
     print(f"Current group(s): {groups}")
    
