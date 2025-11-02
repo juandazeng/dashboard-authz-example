@@ -47,10 +47,10 @@ spec:
             # This tells the proxy to pass the headers to your app
             - "--pass-basic-auth=false"
             - "--set-xauthrequest=true"
-            - "--skip-provider-button=true"
+            - "--skip-provider-button=false"
             - "--email-domain=*"
             - "--pass-access-token=true"
-            - "--set-authorization-header=true"
+            # - "--set-authorization-header=true"
           volumeMounts:
             # Mount the service certs needed for TLS
             - name: proxy-tls
