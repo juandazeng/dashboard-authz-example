@@ -36,7 +36,9 @@ spec:
           args:
             - "--https-address=:8443"
             - "--provider=openshift"
-            - "--openshift-service-account=dashboard-proxy-sa"
+            - "--client-id=dashboard-oauth-client"
+            - "--client-secret-file=/etc/oauth-secret/client-secret"
+            - "--scope=user:full"
             # This is key: it forwards traffic to the main app on localhost
             # The --cookie-secret is a random string, which can be generated with openssl rand -base64 32
             - "--upstream=http://127.0.0.1:8080"
@@ -45,7 +47,6 @@ spec:
             - "--tls-key=/etc/tls/private/tls.key"
             - "--cookie-secret=r0mMIoDOBgzdrhLSRCu57g=="
             # This tells the proxy to pass the headers to your app
-            - "--scope=user:full"
             - "--pass-basic-auth=false"
             - "--set-xauthrequest=true"
             - "--skip-provider-button=false"
@@ -57,6 +58,9 @@ spec:
             - name: proxy-tls
               mountPath: /etc/tls/private
               readOnly: true
+            - name: oauth-secret-volume
+              mountPath: /etc/oauth-secret
+              readOnly: true
       volumes:
         # Volume for your app's config
         - name: config-volume
@@ -66,6 +70,9 @@ spec:
         - name: proxy-tls
           secret:
             secretName: dashboard-route-tls
+        - name: oauth-secret-volume
+          secret:
+            secretName: dashboard-oauth-client-secret
 ---
 apiVersion: v1
 kind: Service
