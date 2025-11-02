@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard-app
+  labels:
+    app: dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashboard
+  template:
+    metadata:
+      labels:
+        app: dashboard
+    spec:
+      containers:
+        - name: dashboard-app
+          # IMPORTANT: Replace this with your project's image stream
+          # e.g., image-registry.openshift-image-registry.svc:5000/my-project/dashboard-app:latest
+          image: quay.io/jzeng/dashboard-authz-example:v1.0
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              # Mounts the ConfigMap data into this directory
+              mountPath: /config
+              readOnly: true
+      volumes:
+        - name: config-volume
+          # Links this volume to the ConfigMap named 'dashboard-role-config'
+          configMap:
+            name: dashboard-role-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard-service
+  labels:
+    app: dashboard
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: dashboard
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: dashboard-route
+  labels:
+    app: dashboard
+spec:
+  to:
+    kind: Service
+    name: dashboard-service
+  port:
+    targetPort: 8080

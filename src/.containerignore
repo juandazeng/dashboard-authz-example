@@ -1,0 +1,2 @@
+# Ignore common development files and directories
+.venv

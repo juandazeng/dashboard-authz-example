@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboard-role-config
+data:
+  # This key 'roles.yaml' becomes the filename inside the container
+  roles.yaml: |
+    roles:
+      admin:
+        - "cluster-admins"
+        - "dashboard-admins"
+      user:
+        - "developers"
+        - "cluster-users"
+        - "viewers"
