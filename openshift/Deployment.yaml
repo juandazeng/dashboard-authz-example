@@ -16,9 +16,7 @@ spec:
     spec:
       containers:
         - name: dashboard-app
-          # IMPORTANT: Replace this with your project's image stream
-          # e.g., image-registry.openshift-image-registry.svc:5000/my-project/dashboard-app:latest
-          image: quay.io/jzeng/dashboard-authz-example:v1.2
+          image: quay.io/jzeng/dashboard-authz-example:v1.3
           ports:
             - containerPort: 8080
           volumeMounts:

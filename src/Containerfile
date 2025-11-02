@@ -1,16 +1,22 @@
 FROM registry.redhat.io/ubi10/python-312-minimal:10.0
 
+ENV APP_ROOT=/opt/app-root \
+    HOME=/opt/app-root/src
+    
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:0.8.22 /uv /uvx /bin/
 
 # Copy the project into the image
-ADD . /app
+ADD . ${HOME}
 USER root
-RUN chown -R 1001:0 /app
-USER 1001
 
 # Sync the project into a new environment, asserting the lockfile is up to date
-WORKDIR /app
+WORKDIR ${HOME}
 RUN uv sync --locked
+RUN chown -R 1001:0 ${APP_ROOT} && \
+    fix-permissions ${APP_ROOT} -P && \
+    rpm-file-permissions
+
+USER 1001
 
 CMD ["uv", "run", "main.py"]
