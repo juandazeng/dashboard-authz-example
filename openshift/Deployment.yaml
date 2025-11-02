@@ -50,7 +50,7 @@ spec:
             - "--skip-provider-button=true"
             - "--email-domain=*"
             - "--pass-access-token=true"
-            # - "--set-authorization-header=true"
+            - "--set-authorization-header=true"
           volumeMounts:
             # Mount the service certs needed for TLS
             - name: proxy-tls
