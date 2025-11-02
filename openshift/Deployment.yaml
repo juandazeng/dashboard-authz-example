@@ -32,6 +32,7 @@ spec:
           ports:
             - containerPort: 8443
               name: proxy-https
+              protocol: TCP
           args:
             - "--https-address=:8443"
             - "--provider=openshift"
@@ -39,6 +40,7 @@ spec:
             # This is key: it forwards traffic to the main app on localhost
             # The --cookie-secret is a random string, which can be generated with openssl rand -base64 32
             - "--upstream=http://127.0.0.1:8080"
+            - '--upstream-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt'
             - "--tls-cert=/etc/tls/private/tls.crt"
             - "--tls-key=/etc/tls/private/tls.key"
             - "--cookie-secret=rUFpN4AeIesgQcgHHCkYDt0s+j6LQouz2RzdfwHqQ9s="
@@ -48,7 +50,7 @@ spec:
             - "--skip-provider-button=true"
             - "--email-domain=*"
             - "--pass-access-token=true"
-            - "--set-authorization-header=true"
+            # - "--set-authorization-header=true"
           volumeMounts:
             # Mount the service certs needed for TLS
             - name: proxy-tls
