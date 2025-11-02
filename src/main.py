@@ -23,23 +23,19 @@ def load_config():
         print(f"Error loading config: {e}")
         ROLE_CONFIG = {'roles': {}}
 
-def get_user_role(groups):
+def get_user_role(user):
     """
     Determines the user's highest-level role based on their groups.
     Checks for 'admin' first, then 'user'.
     """
-    admin_groups = ROLE_CONFIG.get('roles', {}).get('admin', [])
-    user_groups = ROLE_CONFIG.get('roles', {}).get('user', [])
+    admin_users = ROLE_CONFIG.get('roles', {}).get('admin', [])
+    normal_users = ROLE_CONFIG.get('roles', {}).get('user', [])
     
     # Check for admin role
-    for group in groups:
-        if group in admin_groups:
-            return 'admin'
-            
-    # Check for user role
-    for group in groups:
-        if group in user_groups:
-            return 'user'
+    if user in admin_users:
+        return "admin"
+    elif user in normal_users:
+        return "user"
             
     return 'none' # No permissions
 
@@ -49,17 +45,22 @@ def get_current_user_context():
     """
     print(f"Headers: {request.headers}")
 
+    # Load config in case it has changed
+    load_config()
+
     # X-Forwarded-User is set by the OpenShift OAuth proxy
     user = request.headers.get('X-Forwarded-User', 'guest')
     print(f"Current user: {user}")
     
-    # X-Forwarded-Group is a comma-separated list of groups
-    groups_header = request.headers.get('X-Forwarded-Group', '')
-    print(f"Groups header: {groups_header}")
-    groups = [g.strip() for g in groups_header.split(',') if g.strip()]
-    print(f"Current group(s): {groups}")
+    # # X-Forwarded-Group is a comma-separated list of groups
+    # groups_header = request.headers.get('X-Forwarded-Group', '')
+    # print(f"Groups header: {groups_header}")
+    # groups = [g.strip() for g in groups_header.split(',') if g.strip()]
+    # print(f"Current group(s): {groups}")
+    groups = []
    
-    role = get_user_role(groups)
+    # role = get_user_role(groups)
+    role = get_user_role(user)
     print(f"Current role: {role}")
     return user, groups, role
 
