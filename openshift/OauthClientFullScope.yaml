@@ -12,7 +12,7 @@ metadata:
   name: dashboard-oauth-client
 # This secret must match the one you created in step 1
 secret: dashboard-oauth-client-secret
-grantMethod: auto
+grantMethod: prompt
 # --- THIS IS THE FIX ---
 # We explicitly allow this client to request the user:full scope
 scopes:
