@@ -43,7 +43,7 @@ spec:
             - '--upstream-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt'
             - "--tls-cert=/etc/tls/private/tls.crt"
             - "--tls-key=/etc/tls/private/tls.key"
-            - "--cookie-secret=rUFpN4AeIesgQcgHHCkYDt0s+j6LQouz2RzdfwHqQ9s="
+            - "--cookie-secret=r0mMIoDOBgzdrhLSRCu57g=="
             # This tells the proxy to pass the headers to your app
             - "--pass-basic-auth=false"
             - "--set-xauthrequest=true"
