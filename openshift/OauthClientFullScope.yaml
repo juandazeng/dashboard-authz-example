@@ -10,7 +10,6 @@ apiVersion: oauth.openshift.io/v1
 kind: OAuthClient
 metadata:
   name: dashboard-oauth-client
-# This secret must match the one you created in step 1
 secret: dashboard-oauth-client-secret
 grantMethod: prompt
 # --- THIS IS THE FIX ---
