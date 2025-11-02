@@ -37,7 +37,6 @@ spec:
             - "--https-address=:8443"
             - "--provider=openshift"
             - "--openshift-service-account=dashboard-proxy-sa"
-            - "--client-id=dashboard-oauth-client"
             - "--client-secret-file=/etc/oauth-secret/client-secret"
             - "--scope=user:full"
             # This is key: it forwards traffic to the main app on localhost
