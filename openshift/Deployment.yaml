@@ -18,7 +18,7 @@ spec:
       containers:
         # --- Container 1: The main app ---
         - name: dashboard-app
-          image: quay.io/jzeng/dashboard-authz-example:v1.6
+          image: quay.io/jzeng/dashboard-authz-example:v1.7
           ports:
             - containerPort: 8080
           volumeMounts:
