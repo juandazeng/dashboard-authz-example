@@ -15,11 +15,10 @@ grantMethod: auto
 # --- THIS IS THE FIX ---
 # We explicitly allow this client to request the user:full scope
 scopeRestrictions:
-  - exactValues:
-      - "user:full" # Grants full access to user information and permissions
-      - "user:info" # Grants access to basic user information
-      - "user:check-access" # Grants ability to check user's access
-      - "user:list-projects" # Grants ability to list projects the user has access to
+    - "user:full" # Grants full access to user information and permissions
+    - "user:info" # Grants access to basic user information
+    - "user:check-access" # Grants ability to check user's access
+    - "user:list-projects" # Grants ability to list projects the user has access to
 redirectURIs:
   # Add the URL you got from the 'oc get route' command
   # The path /oauth/callback is used by the oauth-proxy
