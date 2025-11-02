@@ -9,9 +9,9 @@ data:
     roles:
       admin:
         - "admin"
+        - "user2"
       user:
         - "user1"
-        - "user2"
         - "user3"
         - "user4"
         - "user5"
