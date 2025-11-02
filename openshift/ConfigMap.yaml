@@ -4,14 +4,14 @@ metadata:
   name: dashboard-role-config
 data:
   # This key 'roles.yaml' becomes the filename inside the container
-  # Maps user to role. Groups are not supported right now
+  # Maps user to role. Groups are not supported in this demo
   roles.yaml: |
     roles:
       admin:
         - "admin"
-        - "user2"
       user:
         - "user1"
+        - "user2"
         - "user3"
         - "user4"
         - "user5"
