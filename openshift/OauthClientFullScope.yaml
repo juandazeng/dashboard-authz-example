@@ -15,6 +15,7 @@ grantMethod: auto
 # --- THIS IS THE FIX ---
 # We explicitly allow this client to request the user:full scope
 scopeRestrictions:
+- literals:
   - "user:full" # Grants full access to user information and permissions
   - "user:info" # Grants access to basic user information
   - "user:check-access" # Grants ability to check user's access
