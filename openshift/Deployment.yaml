@@ -45,6 +45,7 @@ spec:
             - "--tls-key=/etc/tls/private/tls.key"
             - "--cookie-secret=r0mMIoDOBgzdrhLSRCu57g=="
             # This tells the proxy to pass the headers to your app
+            - "--scope=user:full"
             - "--pass-basic-auth=false"
             - "--set-xauthrequest=true"
             - "--skip-provider-button=false"
