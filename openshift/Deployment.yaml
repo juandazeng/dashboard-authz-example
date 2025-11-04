@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dashboard-app
+  name: ai-app
   labels:
-    app: dashboard
+    app: ai-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dashboard
+      app: ai-app
   template:
     metadata:
       labels:
-        app: dashboard
+        app: ai-app
     spec:
-      serviceAccountName: dashboard-proxy-sa
+      serviceAccountName: ai-app-proxy-sa
       containers:
         # --- Container 1: The main app ---
-        - name: dashboard-app
-          image: quay.io/jzeng/dashboard-authz-example:v1.7
+        - name: ai-app
+          image: quay.io/jzeng/ai-app:v1.0
           ports:
             - containerPort: 8080
           volumeMounts:
@@ -36,7 +36,7 @@ spec:
           args:
             - "--https-address=:8443"
             - "--provider=openshift"
-            - "--openshift-service-account=dashboard-proxy-sa"
+            - "--openshift-service-account=ai-app-proxy-sa"
             - "--cookie-secret-file=/etc/oauth-secret/client-secret"
             # This is key: it forwards traffic to the main app on localhost
             # The --cookie-secret is a random string, which can be generated with openssl rand -base64 32
@@ -64,24 +64,24 @@ spec:
         # Volume for your app's config
         - name: config-volume
           configMap:
-            name: dashboard-role-config
+            name: ai-app-role-config
         # Volume for the proxy's TLS certs (auto-injected by OpenShift)
         - name: proxy-tls
           secret:
-            secretName: dashboard-route-tls
+            secretName: ai-app-route-tls
         - name: oauth-secret-volume
           secret:
-            secretName: dashboard-oauth-client-secret
+            secretName: ai-app-oauth-client-secret
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: dashboard-service
+  name: ai-app-service
   labels:
-    app: dashboard
+    app: ai-app
   # THIS ANNOTATION tells OpenShift to auto-generate the secret
   annotations:
-    service.beta.openshift.io/serving-cert-secret-name: dashboard-route-tls
+    service.beta.openshift.io/serving-cert-secret-name: ai-app-route-tls
 spec:
   ports:
     # The service exposes the PROXY'S port
@@ -89,18 +89,18 @@ spec:
       targetPort: 8443
       name: proxy-https
   selector:
-    app: dashboard
+    app: ai-app
 ---
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: dashboard-route
+  name: ai-app-route
   labels:
-    app: dashboard
+    app: ai-app
 spec:
   to:
     kind: Service
-    name: dashboard-service
+    name: ai-app-service
   port:
     # The route targets the service's port (which is named 'proxy-https')
     targetPort: proxy-https

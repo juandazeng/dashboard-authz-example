@@ -105,7 +105,7 @@ LOGIN_TEMPLATE = """
 <body>
   <div class="login-card">
     <h2>Authentication Required</h2>
-    <p>You must log in via OpenShift to access this dashboard.</p>
+    <p>You must log in via OpenShift to access this AI App.</p>
     <a href="/oauth/start?rd=/" class="login-button">Login with OpenShift</a>
   </div>
 </body>
@@ -123,7 +123,7 @@ ERROR_403_TEMPLATE = """
     Your role ('<strong>{{ role }}</strong>', from groups: {{ groups }}) 
     is not authorized for this resource.
   </p>
-  <p><a href="/">Back to Dashboard</a></p>
+  <p><a href="/">Back to Main Page</a></p>
 </body>
 </html>
 """
@@ -132,7 +132,7 @@ DASHBOARD_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Dashboard</title>
+  <title>AI App</title>
   <style>
     body { 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
@@ -273,7 +273,7 @@ DASHBOARD_TEMPLATE = """
   {% endif %}
   <hr>
   
-  <h3>Dashboard Widgets</h3>
+  <h3>AI Widgets</h3>
 
   <div class="widget-container">
     
@@ -325,7 +325,7 @@ ADMIN_TEMPLATE = """
     <li>System Settings</li>
     <li>View Audit Logs</li>
   </ul>
-  <p><a href="/">Back to Dashboard</a></p>
+  <p><a href="/">Back to Main Page</a></p>
 </body>
 </html>
 """

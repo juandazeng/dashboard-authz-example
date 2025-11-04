@@ -1,7 +1,7 @@
 [project]
-name = "authz-dashboard-example"
+name = "ai-app"
 version = "0.1.0"
-description = "Add your description here"
+description = "Example AI app"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
